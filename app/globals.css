@@ -1,15 +1,30 @@
 @import "tailwindcss";
 
-@theme {
-  --color-brand-black: #0D0D0D;
-  --color-brand-gold: #C8A64B;
-  --color-brand-gold-hover: #B2923D;
-  --color-brand-gray: #1A1A1A;
-  --color-brand-light-gray: #F5F5F5;
+/* 🌊 Rolagem Macia & Elevação Editorial */
+html {
+  scroll-behavior: smooth;
 }
 
+@theme {
+  /* 🍇 Nova Paleta: Roxo Imperial & Variações */
+  --color-brand-purple: #340C40;
+  --color-brand-purple-hover: #4A125C;
+  --color-brand-purple-light: #F5EFF8;
+
+  /* 🤍 Tons Clean & Off-White (Fundo e Cards) */
+  --color-brand-white: #FFFFFF;
+  --color-brand-offwhite: #FAFAFA;
+  --color-brand-surface: #F5F5F5;
+
+  /* ✏️ Textos e Linhas Discretas */
+  --color-brand-dark: #1A1A1A;
+  --color-brand-muted: #6B7280;
+  --color-brand-border: #E5E7EB;
+}
+
+/* Estilo Base da Loja (Fundo Claro e Texto Sofisticado) */
 body {
-  background-color: var(--color-brand-black);
-  color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-brand-white);
+  color: var(--color-brand-dark);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }

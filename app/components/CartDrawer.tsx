@@ -1,141 +1,138 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { X, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
+import { X, Trash2, ArrowRight, ShoppingBag } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  size: string;
-  image: string;
-  quantity: number;
-}
+export function CartDrawer() {
+  const { cartItems, isCartOpen, closeCart, removeFromCart, subtotal, pixTotal } = useCart();
 
-interface CartDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  // Produto fictício no carrinho para testar a interface
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: "1",
-      name: "Corrente Grumet 10mm Dupla Camada Ouro 18k",
-      price: 489.00,
-      size: "60cm",
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800",
-    },
-  ]);
-
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
-  if (!isOpen) return null;
+  if (!isCartOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Fundo escuro com transparência */}
+    <div className="fixed inset-0 z-50 flex justify-end">
+      {/* OVERLAY ESCURO */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        onClick={closeCart}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-[var(--color-brand-black)] border-l border-white/10 text-white flex flex-col justify-between shadow-2xl">
+      {/* PAINEL LATERAL */}
+      <div className="relative w-full max-w-md bg-white text-[#1A1A1A] h-full shadow-2xl flex flex-col justify-between z-10 border-l border-[#E5E7EB]">
 
-          {/* TOPO DO CARRINHO */}
-          <div className="p-6 border-b border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[var(--color-brand-gold)]">
-              <ShoppingBag className="w-5 h-5" />
-              <h2 className="text-sm uppercase tracking-widest font-bold">Seu Carrinho</h2>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        {/* CABEÇALHO */}
+        <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between bg-[#FAFAFA]">
+          <div className="flex items-center gap-2">
+            <ShoppingBag className="w-5 h-5 text-[#340C40]" />
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-[#1A1A1A]">
+              Seu Carrinho
+            </h2>
           </div>
+          <button
+            onClick={closeCart}
+            className="p-2 text-gray-400 hover:text-[#340C40] transition-colors rounded-full hover:bg-gray-100 cursor-pointer"
+            title="Fechar carrinho"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-          {/* LISTA DE PRODUTOS */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {cartItems.length === 0 ? (
-              <div className="text-center py-16 text-gray-400">
-                <ShoppingBag className="w-12 h-12 mx-auto mb-4 opacity-30 text-[var(--color-brand-gold)]" />
-                <p className="text-xs uppercase tracking-widest">Seu carrinho está vazio.</p>
-              </div>
-            ) : (
-              cartItems.map((item) => (
-                <div key={item.id} className="flex gap-4 p-3 bg-[var(--color-brand-gray)] border border-white/5">
-                  <div className="relative w-20 h-20 bg-black shrink-0">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+        {/* LISTA DE PRODUTOS */}
+        <div className="p-6 flex-1 overflow-y-auto space-y-4">
+          {cartItems.length > 0 ? (
+            cartItems.map((item) => (
+              <div
+                key={`${item.id}-${item.size || ""}`}
+                className="flex gap-4 p-4 bg-[#FAFAFA] border border-[#E5E7EB] rounded-2xl relative shadow-sm"
+              >
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-white border border-[#E5E7EB] flex-shrink-0">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="flex-1 flex flex-col justify-between pr-6">
+                  <div>
+                    <h3 className="text-xs font-semibold text-[#1A1A1A] line-clamp-2 leading-snug">
+                      {item.name}
+                    </h3>
+                    {item.size && (
+                      <span className="text-[10px] text-gray-500 uppercase tracking-wider block mt-1">
+                        TAM: {item.size}
+                      </span>
+                    )}
                   </div>
 
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start gap-2">
-                        <h4 className="text-xs font-serif text-white line-clamp-2">{item.name}</h4>
-                        <button
-                          onClick={() => removeItem(item.id)}
-                          className="text-gray-500 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                      <span className="text-[10px] text-gray-400 uppercase block mt-1">Tam: {item.size}</span>
-                    </div>
-
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-xs text-[var(--color-brand-gold)] font-bold">
-                        R$ {item.price.toFixed(2)}
-                      </span>
-                      <span className="text-[10px] text-gray-400">Qtd: {item.quantity}</span>
-                    </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-sm font-bold text-[#340C40]">
+                      R$ {item.price.toFixed(2)}
+                    </span>
+                    <span className="text-[10px] text-gray-500 font-medium">
+                      Qtd: {item.quantity}
+                    </span>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
 
-          {/* RODAPÉ DO CARRINHO COM LINK PARA O CHECKOUT */}
-          {cartItems.length > 0 && (
-            <div className="p-6 border-t border-white/10 bg-black/50 space-y-4">
-              <div className="flex justify-between text-xs uppercase tracking-widest">
-                <span className="text-gray-400">Subtotal:</span>
-                <span className="text-white font-bold">R$ {total.toFixed(2)}</span>
+                <button
+                  onClick={() => removeFromCart(item.id, item.size)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-red-50 cursor-pointer"
+                  title="Remover produto"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
-
-              <div className="flex justify-between text-xs uppercase tracking-widest text-green-400">
-                <span>Total no PIX (-5%):</span>
-                <span className="font-bold">R$ {(total * 0.95).toFixed(2)}</span>
-              </div>
-
-              <Link
-                href="/checkout"
-                onClick={onClose}
-                className="w-full bg-[var(--color-brand-gold)] hover:bg-[var(--color-brand-gold-hover)] text-[var(--color-brand-black)] py-4 font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--color-brand-gold)]/10 text-center block"
-              >
-                Finalizar Compra <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <button
-                onClick={onClose}
-                className="w-full text-center text-[10px] uppercase tracking-widest text-gray-400 hover:text-white transition-colors"
-              >
-                Continuar Comprando
-              </button>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center py-12">
+              <ShoppingBag className="w-12 h-12 text-gray-300 mb-3" />
+              <p className="text-sm font-medium text-gray-600">Seu carrinho está vazio.</p>
+              <p className="text-xs text-gray-400 mt-1">Navegue pelas joias e adicione suas peças favoritas!</p>
             </div>
           )}
-
         </div>
+
+        {/* RODAPÉ */}
+        <div className="p-6 border-t border-[#E5E7EB] bg-[#FAFAFA] space-y-4">
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between text-gray-600 font-medium">
+              <span>SUBTOTAL:</span>
+              <span className="text-[#1A1A1A] font-bold">R$ {subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
+              <span>TOTAL NO PIX (-5%):</span>
+              <span>R$ {pixTotal.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {cartItems.length > 0 ? (
+            <Link
+              href="/checkout"
+              onClick={closeCart}
+              className="w-full bg-[#340C40] hover:bg-[#4A125C] text-white font-semibold text-xs uppercase tracking-widest py-4 rounded-full flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+            >
+              Finalizar Compra <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : (
+            <button
+              disabled
+              className="w-full bg-gray-200 text-gray-400 font-semibold text-xs uppercase tracking-widest py-4 rounded-full flex items-center justify-center gap-2 cursor-not-allowed"
+            >
+              Carrinho Vazio
+            </button>
+          )}
+
+          <button
+            onClick={closeCart}
+            className="w-full text-center text-xs text-gray-500 hover:text-[#340C40] uppercase tracking-widest font-medium py-1 transition-colors cursor-pointer"
+          >
+            Continuar Comprando
+          </button>
+        </div>
+
       </div>
     </div>
   );

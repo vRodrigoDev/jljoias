@@ -3,282 +3,260 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, Lock, CreditCard, QrCode, CheckCircle2 } from "lucide-react";
+import { Lock, ArrowLeft, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 export default function CheckoutPage() {
-  const [paymentMethod, setPaymentMethod] = useState<"pix" | "card">("pix");
-  const [isPaid, setIsPaid] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    cpf: "",
+    email: "",
+    phone: "",
+    cep: "",
+    address: "",
+    number: "",
+    neighborhood: "",
+    city: "",
+    state: "",
+  });
 
-  // Item simulado do checkout
-  const product = {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const item = {
     name: "Corrente Grumet 10mm Dupla Camada Ouro 18k",
-    size: "60cm",
-    price: 489.00,
-    pixPrice: 464.55,
-    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800",
+    size: "60CM",
+    price: 489.0,
+    discountPix: 24.45,
+    totalPix: 464.55,
+    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=300",
   };
-
-  const finalPrice = paymentMethod === "pix" ? product.pixPrice : product.price;
-
-  const handleFinishPayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsPaid(true);
-  };
-
-  if (isPaid) {
-    return (
-      <main className="min-h-screen bg-[var(--color-brand-black)] text-white flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-[var(--color-brand-gray)] border border-white/10 p-8 text-center space-y-6">
-          <CheckCircle2 className="w-16 h-16 text-[var(--color-brand-gold)] mx-auto" />
-          <h1 className="text-2xl font-serif font-bold text-white">Pedido Confirmado!</h1>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Obrigado por comprar na <strong className="text-white">JLJoias</strong>. Enviamos o comprovante e o código de rastreamento para o seu e-mail e WhatsApp.
-          </p>
-          <div className="p-4 bg-black/40 border border-white/5 text-left text-xs space-y-2">
-            <p className="text-gray-400"><strong className="text-white">Pedido:</strong> #JL-{Math.floor(100000 + Math.random() * 900000)}</p>
-            <p className="text-gray-400"><strong className="text-white">Item:</strong> {product.name} ({product.size})</p>
-            <p className="text-gray-400"><strong className="text-white">Total Pago:</strong> R$ {finalPrice.toFixed(2)}</p>
-          </div>
-          <Link
-            href="/"
-            className="inline-block w-full bg-[var(--color-brand-gold)] text-[var(--color-brand-black)] font-bold text-xs uppercase tracking-widest py-3.5"
-          >
-            Voltar para a Loja
-          </Link>
-        </div>
-      </main>
-    );
-  }
 
   return (
-    <main className="min-h-screen bg-[var(--color-brand-black)] text-white pb-16">
-      {/* TOPO CHECKOUT SEGURO */}
-      <header className="border-b border-white/10 py-6 bg-black/50">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <Link href="/" className="text-xl font-serif font-bold tracking-widest text-white">
-            JL<span className="text-[var(--color-brand-gold)] font-light">JOIAS</span>
+    <div className="min-h-screen bg-[#FAFAFA] text-[#1A1A1A] font-sans pb-16">
+
+      {/* CABEÇALHO DO CHECKOUT */}
+      <header className="bg-white border-b border-[#E5E7EB] py-5 px-6 shadow-sm">
+        <div className="container mx-auto flex items-center justify-between">
+          <Link href="/" className="text-xl font-serif font-bold tracking-widest text-[#1A1A1A]">
+            JL<span className="text-[#340C40] font-light">JOIAS</span>
           </Link>
-          <div className="flex items-center gap-2 text-xs text-green-400 font-semibold uppercase tracking-wider">
-            <Lock className="w-4 h-4" /> Ambiente 100% Criptografado
+
+          <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 text-xs font-semibold">
+            <Lock className="w-3.5 h-3.5" />
+            <span>AMBIENTE 100% CRIPTOGRAFADO</span>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-6 py-8">
+
+        {/* BOTÃO VOLTAR */}
         <Link
-          href="/produto/1"
-          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-gray-400 hover:text-[var(--color-brand-gold)] mb-8 transition-colors"
+          href="/"
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-gray-500 hover:text-[#340C40] mb-8 transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4" /> Voltar ao produto
         </Link>
 
-        <form onSubmit={handleFinishPayment} className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
-          {/* COLUNA 1 & 2: DADOS DO CLIENTE E PAGAMENTO */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* FORMULÁRIO DE ENTREGA (7 Colunas) */}
+          <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] shadow-sm">
+            <h2 className="text-lg font-serif font-light text-[#1A1A1A] mb-6 pb-4 border-b border-[#E5E7EB] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#F5EFF8] text-[#340C40] text-xs font-bold flex items-center justify-center">1</span>
+              Dados para Entrega
+            </h2>
 
-            {/* 1. DADOS PESSOAIS */}
-            <div className="bg-[var(--color-brand-gray)] border border-white/5 p-6 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--color-brand-gold)] flex items-center gap-2">
-                1. Identificação do Cliente
-              </h3>
+            <form className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  placeholder="Nome Completo *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="CPF *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-                <input
-                  type="email"
-                  placeholder="E-mail para confirmação *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-                <input
-                  type="tel"
-                  placeholder="WhatsApp com DDD *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-              </div>
-            </div>
-
-            {/* 2. ENDEREÇO DE ENTREGA */}
-            <div className="bg-[var(--color-brand-gray)] border border-white/5 p-6 space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--color-brand-gold)]">
-                2. Endereço de Entrega
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input
-                  type="text"
-                  placeholder="CEP *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none sm:col-span-1"
-                />
-                <input
-                  type="text"
-                  placeholder="Rua / Avenida *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none sm:col-span-2"
-                />
-                <input
-                  type="text"
-                  placeholder="Número *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Bairro *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Cidade / UF *"
-                  required
-                  className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                />
-              </div>
-            </div>
-
-            {/* 3. PAGAMENTO */}
-            <div className="bg-[var(--color-brand-gray)] border border-white/5 p-6 space-y-6">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--color-brand-gold)]">
-                3. Forma de Pagamento
-              </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("pix")}
-                  className={`p-4 border flex flex-col items-center gap-2 transition-all ${
-                    paymentMethod === "pix"
-                      ? "border-green-500 bg-green-500/10 text-white"
-                      : "border-white/10 text-gray-400 hover:border-white/20"
-                  }`}
-                >
-                  <QrCode className="w-6 h-6 text-green-400" />
-                  <span className="text-xs uppercase font-bold">PIX (5% OFF)</span>
-                  <span className="text-[10px] text-green-400 font-medium">Aprovação Imediata</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("card")}
-                  className={`p-4 border flex flex-col items-center gap-2 transition-all ${
-                    paymentMethod === "card"
-                      ? "border-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10 text-white"
-                      : "border-white/10 text-gray-400 hover:border-white/20"
-                  }`}
-                >
-                  <CreditCard className="w-6 h-6 text-[var(--color-brand-gold)]" />
-                  <span className="text-xs uppercase font-bold">Cartão de Crédito</span>
-                  <span className="text-[10px] text-gray-400">Em até 10x sem juros</span>
-                </button>
-              </div>
-
-              {/* CONTEÚDO DINÂMICO PIX OU CARTÃO */}
-              {paymentMethod === "pix" ? (
-                <div className="p-4 bg-black/40 border border-green-500/20 text-center space-y-2">
-                  <p className="text-xs text-green-400 font-semibold uppercase">
-                    Economia de R$ {(product.price - product.pixPrice).toFixed(2)} aplicada!
-                  </p>
-                  <p className="text-[11px] text-gray-400">
-                    O QR Code do PIX e a chave 'Copia e Cola' serão gerados após clicar no botão de finalizar.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3 pt-2">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Nome Completo *</label>
                   <input
                     type="text"
-                    placeholder="Número do Cartão"
-                    required
-                    className="w-full bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Seu nome completo"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
                   />
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      placeholder="Validade (MM/AA)"
-                      required
-                      className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="CVV"
-                      required
-                      className="bg-black/50 border border-white/10 px-4 py-3 text-xs text-white placeholder-gray-500 focus:border-[var(--color-brand-gold)] outline-none"
-                    />
-                  </div>
                 </div>
-              )}
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">CPF *</label>
+                  <input
+                    type="text"
+                    name="cpf"
+                    value={formData.cpf}
+                    onChange={handleChange}
+                    placeholder="000.000.000-00"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">E-mail para confirmação *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="seu.email@exemplo.com"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">WhatsApp com DDD *</label>
+                  <input
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="(00) 90000-0000"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+              </div>
+
+              <hr className="my-6 border-[#E5E7EB]" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">CEP *</label>
+                  <input
+                    type="text"
+                    name="cep"
+                    value={formData.cep}
+                    onChange={handleChange}
+                    placeholder="00000-000"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Rua / Avenida *</label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Nome da sua rua"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Número *</label>
+                  <input
+                    type="text"
+                    name="number"
+                    value={formData.number}
+                    onChange={handleChange}
+                    placeholder="123"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Bairro *</label>
+                  <input
+                    type="text"
+                    name="neighborhood"
+                    value={formData.neighborhood}
+                    onChange={handleChange}
+                    placeholder="Seu bairro"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Cidade / UF *</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="São Paulo / SP"
+                    className="w-full bg-[#FAFAFA] border border-[#E5E7EB] rounded-xl px-4 py-3 text-xs text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#340C40] focus:ring-1 focus:ring-[#340C40] transition-all"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+
+          {/* RESUMO DO PEDIDO (5 Colunas) */}
+          <div className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] shadow-sm space-y-6">
+            <h2 className="text-lg font-serif font-light text-[#1A1A1A] pb-4 border-b border-[#E5E7EB] flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#F5EFF8] text-[#340C40] text-xs font-bold flex items-center justify-center">2</span>
+              Resumo do Pedido
+            </h2>
+
+            {/* ITEM SELECIONADO */}
+            <div className="flex gap-4 p-3 bg-[#FAFAFA] rounded-xl border border-[#E5E7EB]">
+              <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white border border-[#E5E7EB] flex-shrink-0">
+                <Image src={item.image} alt={item.name} fill className="object-cover" />
+              </div>
+              <div className="flex-1 text-xs justify-center flex flex-col">
+                <h3 className="font-semibold text-[#1A1A1A] line-clamp-1">{item.name}</h3>
+                <span className="text-gray-500 font-medium mt-0.5">TAM: {item.size}</span>
+                <span className="text-[#340C40] font-bold mt-1">R$ {item.price.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* CÁLCULO DE VALORES */}
+            <div className="space-y-2.5 text-xs pt-2">
+              <div className="flex justify-between text-gray-600 font-medium">
+                <span>Subtotal:</span>
+                <span className="text-[#1A1A1A]">R$ {item.price.toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between text-gray-600 font-medium">
+                <span>Frete (Sedex Seguro):</span>
+                <span className="text-emerald-700 font-bold">GRÁTIS</span>
+              </div>
+
+              <div className="flex justify-between text-emerald-700 font-medium">
+                <span>Desconto PIX (5%):</span>
+                <span>- R$ {item.discountPix.toFixed(2)}</span>
+              </div>
+
+              <hr className="border-[#E5E7EB] my-2" />
+
+              <div className="flex justify-between text-sm font-bold text-[#1A1A1A]">
+                <span>Total no Cartão:</span>
+                <span>R$ {item.price.toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between text-sm font-bold text-emerald-800 bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                <span>Total no PIX (-5%):</span>
+                <span>R$ {item.totalPix.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* BOTÃO FINALIZAR PEDIDO */}
+            <button
+              type="button"
+              className="w-full bg-[#340C40] hover:bg-[#4A125C] text-white font-semibold text-xs uppercase tracking-widest py-4 rounded-full flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg mt-6"
+            >
+              <CheckCircle2 className="w-4 h-4" /> Finalizar Pedido com Segurança
+            </button>
+
+            {/* SELO DE GARANTIA */}
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500 pt-2 font-medium">
+              <ShieldCheck className="w-4 h-4 text-[#340C40]" />
+              <span>GARANTIA DE ENTREGA JLJOIAS</span>
             </div>
 
           </div>
 
-          {/* COLUNA 3: RESUMO DO PEDIDO */}
-          <div className="space-y-6">
-            <div className="bg-[var(--color-brand-gray)] border border-white/5 p-6 space-y-6 sticky top-8">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-white border-b border-white/10 pb-4">
-                Resumo do Pedido
-              </h3>
+        </div>
 
-              <div className="flex gap-4 items-center">
-                <div className="relative w-16 h-16 bg-black shrink-0 border border-white/10">
-                  <Image src={product.image} alt="" fill className="object-cover" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-xs font-serif text-white">{product.name}</h4>
-                  <span className="text-[10px] text-gray-400 uppercase">Tam: {product.size}</span>
-                  <p className="text-xs text-[var(--color-brand-gold)] font-bold mt-1">
-                    R$ {product.price.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-4 space-y-2 text-xs">
-                <div className="flex justify-between text-gray-400">
-                  <span>Subtotal:</span>
-                  <span>R$ {product.price.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-gray-400">
-                  <span>Frete (Sedex Seguro):</span>
-                  <span className="text-green-400 uppercase font-semibold">Grátis</span>
-                </div>
-                {paymentMethod === "pix" && (
-                  <div className="flex justify-between text-green-400">
-                    <span>Desconto PIX (5%):</span>
-                    <span>- R$ {(product.price - product.pixPrice).toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-base font-bold text-white border-t border-white/10 pt-3">
-                  <span>Total:</span>
-                  <span className="text-[var(--color-brand-gold)]">R$ {finalPrice.toFixed(2)}</span>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-[var(--color-brand-gold)] hover:bg-[var(--color-brand-gold-hover)] text-[var(--color-brand-black)] font-bold text-xs uppercase tracking-widest py-4 transition-all shadow-lg shadow-[var(--color-brand-gold)]/10 cursor-pointer"
-              >
-                Pagar R$ {finalPrice.toFixed(2)} Agora
-              </button>
-
-              <div className="flex items-center justify-center gap-2 text-[10px] text-gray-500 uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-[var(--color-brand-gold)]" /> Garantia de Entrega JLJoias
-              </div>
-            </div>
-          </div>
-
-        </form>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
