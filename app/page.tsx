@@ -1,41 +1,91 @@
-import { AnnouncementBar } from "./components/AnnouncementBar";
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { PRODUCTS } from "./products";
 import { Header } from "./components/Header";
 import { HeroBanner } from "./components/HeroBanner";
-import { Footer } from "./components/Footer";
 import { ProductCard } from "./components/ProductCard";
-import { PRODUCTS } from "./products";
+import Link from "next/link";
 
-export default function Home() {
+function VitrineContent() {
+  const searchParams = useSearchParams();
+  const categoriaAtiva = searchParams.get("categoria");
+
+  // Filtro de produtos
+  const produtosExibidos = !categoriaAtiva
+    ? PRODUCTS
+    : PRODUCTS.filter((p) => {
+        const cat = p.category.toLowerCase();
+        const param = categoriaAtiva.toLowerCase();
+
+        if (param === "correntes" || param === "gargantilhas") {
+          return cat === "gargantilhas" || cat === "correntes" || cat === "escapulários";
+        }
+
+        return cat === param;
+      });
+
+  const tituloSecao = !categoriaAtiva
+    ? "Nossas Peças"
+    : categoriaAtiva.toLowerCase() === "gargantilhas" || categoriaAtiva.toLowerCase() === "correntes"
+    ? "Correntes & Gargantilhas"
+    : categoriaAtiva;
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5]">
-      <AnnouncementBar />
+    <section id="vitrine" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 scroll-mt-24">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-stone-200">
+        <div>
+          <span className="text-[11px] uppercase tracking-widest text-[#9C7A4A] font-semibold block">
+            CATÁLOGO
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-serif text-[#1C1917]">
+            {tituloSecao}
+          </h2>
+        </div>
+
+        {/* Botão de limpar filtro e ver todas as peças */}
+        {categoriaAtiva && (
+          <Link
+            href="/#vitrine"
+            className="text-xs text-stone-500 hover:text-stone-800 underline underline-offset-4 mt-2 sm:mt-0 transition-colors"
+          >
+            Ver todas as peças ({PRODUCTS.length})
+          </Link>
+        )}
+      </div>
+
+      {/* Grelha de Produtos */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {produtosExibidos.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+
+      {produtosExibidos.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-stone-500 text-sm">
+            Nenhuma peça encontrada nesta categoria no momento.
+          </p>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <main className="min-h-screen bg-[#FAF8F5]">
+      {/* 1. Cabeçalho fixo no topo com os botões e categorias */}
       <Header />
 
-      <main className="flex-1">
-        {/* Carrossel do Topo */}
-        <HeroBanner />
+      {/* 2. Banner com o carrossel */}
+      <HeroBanner />
 
-        {/* Vitrine Estática com as 6 peças Rommanel */}
-        <section id="vitrine" className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-serif text-[#1C1917] tracking-wide font-normal">
-              Coleção Rommanel
-            </h2>
-            <div className="w-16 h-0.5 bg-[#C5A880] mx-auto mt-3 mb-2" />
-            <p className="text-sm text-stone-500 font-light">
-              Peças banhadas a ouro 18k selecionadas para você
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {PRODUCTS.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+      {/* 3. Vitrine com filtragem dinâmica */}
+      <Suspense fallback={<div className="py-12 text-center text-stone-400">A carregar catálogo...</div>}>
+        <VitrineContent />
+      </Suspense>
+    </main>
   );
 }

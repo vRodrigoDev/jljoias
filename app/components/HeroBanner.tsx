@@ -20,11 +20,11 @@ export function HeroBanner() {
               COLEÇÃO ROMMANEL
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#1C1917] font-normal leading-tight">
-              Joias e Semijoias <br />
-              <span className="italic">Exclusivas</span>
+              Semijoias que traduzem <br />
+              <span className="italic">sofisticação, beleza e autenticidade.</span>
             </h1>
             <p className="text-xs sm:text-sm text-stone-600 font-light leading-relaxed max-w-sm">
-              Gargantilhas e escapulários folheados a ouro 18k com acabamento impecável para realçar o seu brilho.
+              Uma seleção especial de gargantilhas e escapulários Rommanel, com acabamento refinado e o brilho característico da marca.
             </p>
             <div className="pt-2">
               <a
