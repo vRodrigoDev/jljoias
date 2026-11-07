@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, User, ShoppingBag } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export function Header() {
+  const router = useRouter();
   const cart = useCart() as unknown as Record<string, unknown>;
   const totalItems = typeof cart.totalItems === "number" ? cart.totalItems : 0;
 
@@ -19,38 +21,66 @@ export function Header() {
     }
   };
 
+  // Rolagem suave garantida em qualquer clique de categoria
+  const handleCategoryClick = (categoria?: string) => {
+    if (!categoria) {
+      // Clicou em INÍCIO: vai para a home sem parâmetros e sobe ao topo macio
+      router.push("/");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    // Clicou em CORRENTES, PULSEIRAS, etc.
+    router.push(`/?categoria=${encodeURIComponent(categoria)}`);
+
+    // Dá um breve instante para o DOM atualizar e rola suavemente até a vitrine
+    setTimeout(() => {
+      const vitrineElement = document.getElementById("vitrine");
+      if (vitrineElement) {
+        vitrineElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-stone-200/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Menu de Categorias (Desktop) */}
         <nav className="hidden md:flex items-center space-x-8 text-xs font-medium tracking-wider uppercase text-stone-700">
-          <Link href="/#vitrine" className="hover:text-stone-900 transition-colors">
+          <button
+            type="button"
+            onClick={() => handleCategoryClick()}
+            className="hover:text-stone-900 transition-colors uppercase tracking-wider font-medium text-xs cursor-pointer"
+          >
             INÍCIO
-          </Link>
-          <Link
-            href="/?categoria=Gargantilhas#vitrine"
-            className="hover:text-stone-900 transition-colors"
+          </button>
+          <button
+            type="button"
+            onClick={() => handleCategoryClick("Gargantilhas")}
+            className="hover:text-stone-900 transition-colors uppercase tracking-wider font-medium text-xs cursor-pointer"
           >
             CORRENTES
-          </Link>
-          <Link
-            href="/?categoria=Pulseiras#vitrine"
-            className="hover:text-stone-900 transition-colors"
+          </button>
+          <button
+            type="button"
+            onClick={() => handleCategoryClick("Pulseiras")}
+            className="hover:text-stone-900 transition-colors uppercase tracking-wider font-medium text-xs cursor-pointer"
           >
             PULSEIRAS
-          </Link>
-          <Link
-            href="/?categoria=Anéis#vitrine"
-            className="hover:text-stone-900 transition-colors"
+          </button>
+          <button
+            type="button"
+            onClick={() => handleCategoryClick("Anéis")}
+            className="hover:text-stone-900 transition-colors uppercase tracking-wider font-medium text-xs cursor-pointer"
           >
             ANÉIS
-          </Link>
+          </button>
         </nav>
 
         {/* Logótipo Central */}
         <div className="flex-1 md:flex-initial text-center md:text-left">
-          <Link href="/" className="inline-block">
+          <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-block">
             <span className="font-serif text-2xl tracking-widest text-[#1C1917] font-semibold">
               JL<span className="font-light tracking-normal">JOIAS</span>
             </span>
@@ -62,7 +92,7 @@ export function Header() {
           <button
             type="button"
             aria-label="Pesquisar"
-            className="hover:text-stone-950 transition-colors p-1"
+            className="hover:text-stone-950 transition-colors p-1 cursor-pointer"
           >
             <Search className="w-5 h-5 stroke-[1.5]" />
           </button>
@@ -90,7 +120,7 @@ export function Header() {
           <button
             type="button"
             aria-label="Minha Conta"
-            className="hover:text-stone-950 transition-colors p-1 hidden sm:block"
+            className="hover:text-stone-950 transition-colors p-1 hidden sm:block cursor-pointer"
           >
             <User className="w-5 h-5 stroke-[1.5]" />
           </button>
@@ -100,7 +130,7 @@ export function Header() {
             type="button"
             onClick={handleOpenCart}
             aria-label="Sacola de Compras"
-            className="relative hover:text-stone-950 transition-colors p-1"
+            className="relative hover:text-stone-950 transition-colors p-1 cursor-pointer"
           >
             <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
             {totalItems > 0 && (
