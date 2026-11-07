@@ -12,10 +12,10 @@ export default function Home() {
       <Header />
 
       <main className="flex-1">
-        {/* Carrossel apenas aqui no topo */}
+        {/* Carrossel do Topo */}
         <HeroBanner />
 
-        {/* Vitrine fixa embaixo (grade parada com as 6 peças) */}
+        {/* Vitrine Estática com as 6 peças Rommanel */}
         <section id="vitrine" className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl md:text-3xl font-serif text-[#1C1917] tracking-wide font-normal">
@@ -27,7 +27,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Grade estática de 2 a 3 colunas, sem carrossel e sem mexer */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {PRODUCTS.map((product) => (
               <ProductCard key={product.id} product={product} />
