@@ -1,84 +1,107 @@
 ﻿"use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
-import { PRODUCTS } from "../products";
+import { Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
 
+import { PRODUCTS } from "../products";
+
 export function HeroBanner() {
+  const featuredProducts = PRODUCTS.slice(0, 7);
+
   return (
-    <section className="relative w-full bg-[#FAF8F5] py-8 md:py-12 border-b border-stone-200/40">
+    <section className="relative overflow-hidden bg-[#FAF8F5] pt-6 pb-12 sm:pt-10 sm:pb-16 border-b border-stone-200/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Lado Esquerdo: Texto da Coleção */}
-          <div className="lg:col-span-4 space-y-4">
-            <span className="text-[11px] uppercase tracking-widest text-[#9C7A4A] font-semibold block">
-              COLEÇÃO ROMMANEL
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* Lado Esquerdo: Textos */}
+          <div className="lg:col-span-5 text-center lg:text-left">
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#9C7A4A] block mb-3">
+              Coleção Rommanel
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#1C1917] font-normal leading-tight">
-              Semijoias que traduzem <br />
-              <span className="italic">sofisticação, beleza e autenticidade.</span>
+            <h1 className="text-3xl sm:text-5xl font-serif text-[#1C1917] leading-[1.15] mb-5 tracking-tight">
+              Semijoias que traduzem sofisticação, beleza e autenticidade.
             </h1>
-            <p className="text-xs sm:text-sm text-stone-600 font-light leading-relaxed max-w-sm">
-              Uma seleção especial de gargantilhas e escapulários Rommanel, com acabamento refinado e o brilho característico da marca.
+            <p className="text-stone-600 text-sm sm:text-base leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+              Uma seleção especial de gargantilhas e escapulários Rommanel, com
+              acabamento refinado e o brilho característico da marca.
             </p>
-            <div className="pt-2">
-              <a
-                href="#vitrine"
-                className="inline-block border border-stone-800 text-stone-800 hover:bg-stone-900 hover:text-white px-6 py-2.5 rounded-full text-xs font-medium tracking-wider uppercase transition-colors"
+            <div className="flex justify-center lg:justify-start">
+              <Link
+                href="/#vitrine"
+                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full border border-stone-800 text-stone-900 text-xs font-medium tracking-widest uppercase hover:bg-stone-900 hover:text-white transition-all duration-300"
               >
-                VER COLEÇÃO
-              </a>
+                Ver Coleção
+              </Link>
             </div>
           </div>
 
-          {/* Lado Direito: Carrossel com os cartões dos produtos */}
-          <div className="lg:col-span-8 overflow-hidden">
+          {/* Lado Direito: Carrossel */}
+          <div className="lg:col-span-7 w-full max-w-sm sm:max-w-none mx-auto">
             <Swiper
-              modules={[Autoplay, Pagination]}
-              autoplay={{ delay: 3500, disableOnInteraction: false }}
-              pagination={{ clickable: true }}
-              loop={true}
-              spaceBetween={20}
-              slidesPerView={1.2}
-              breakpoints={{
-                640: { slidesPerView: 2.2 },
-                1024: { slidesPerView: 2.6 },
+              modules={[Pagination, Autoplay]}
+              pagination={{
+                clickable: true,
+                dynamicBullets: true,
               }}
-              className="pb-10"
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+              }}
+              loop={true}
+              slidesPerView={1}
+              spaceBetween={16}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 2.3,
+                  spaceBetween: 24,
+                },
+                1280: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+              }}
+              className="pb-12"
             >
-              {PRODUCTS.map((product) => (
-                <SwiperSlide key={product.id}>
+              {featuredProducts.map((product) => (
+                <SwiperSlide key={product.id} className="h-auto">
                   <Link
                     href={`/produto/${product.id}`}
-                    className="block bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow border border-stone-200/60 relative group"
+                    className="block group bg-white rounded-2xl p-5 border border-stone-200/80 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col justify-between"
                   >
-                    {/* Tag no topo */}
-                    <span className="absolute top-3 left-3 z-10 text-[9px] uppercase font-bold tracking-wider bg-[#3B194C] text-white px-2.5 py-0.5 rounded-full">
-                      {product.category || "GARGANTILHAS"}
-                    </span>
+                    <div>
+                      <span className="inline-block px-2.5 py-0.5 mb-3 rounded-full bg-[#340C40] text-white text-[9px] font-semibold tracking-wider uppercase">
+                        {product.category}
+                      </span>
 
-                    {/* Imagem da Joia */}
-                    <div className="relative aspect-square w-full rounded-xl overflow-hidden mb-3 bg-[#FAF8F5]/40 flex items-center justify-center">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-                      />
+                      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-stone-50 flex items-center justify-center">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
                     </div>
 
-                    {/* Título e Preço */}
-                    <div className="text-center pt-1">
-                      <h3 className="text-xs font-medium text-stone-800 truncate">
+                    <div className="mt-4 text-center">
+                      <h3 className="text-xs sm:text-sm font-medium text-stone-800 line-clamp-1 group-hover:text-[#9C7A4A] transition-colors">
                         {product.name}
                       </h3>
-                      <p className="text-sm font-bold text-[#1C1917] mt-1">
-                        R$ {product.price.toFixed(2).replace(".", ",")}
+                      <p className="mt-1 text-sm sm:text-base font-semibold text-stone-950 font-serif">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(product.price)}
                       </p>
                     </div>
                   </Link>
@@ -86,6 +109,7 @@ export function HeroBanner() {
               ))}
             </Swiper>
           </div>
+
         </div>
       </div>
     </section>
