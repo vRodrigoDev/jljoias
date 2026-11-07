@@ -1,129 +1,74 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules';
+import Image from "next/image";
+import Link from "next/link";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import { PRODUCTS, Product } from "../products";
 
-import 'swiper/css';
-import 'swiper/css/pagination';
-
-export interface Product {
-  id: string | number;
-  slug?: string;
-  name: string;
-  category?: string;
-  price: string | number;
-  image?: string;
-  imageUrl?: string;
-}
+import "swiper/css";
+import "swiper/css/pagination";
 
 interface ProductCarouselProps {
-  title?: string;
-  subtitle?: string;
   products?: Product[];
 }
 
-export function ProductCarousel({
-  title = 'Destaques & Mais Vendidos',
-  subtitle = 'Coleção Exclusiva',
-  products = [],
-}: ProductCarouselProps) {
-  // Garante itens duplicados suficientes para o loop infinito funcionar sem erro do Swiper
-  const displayProducts =
-    products.length > 0 && products.length < 6
-      ? [...products, ...products, ...products]
-      : products;
-
+export default function ProductCarousel({ products = PRODUCTS }: ProductCarouselProps) {
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-8">
-      {(title || subtitle) && (
-        <div className="text-center mb-8">
-          {subtitle && (
-            <span className="text-[#340C40] text-xs uppercase tracking-[0.2em] font-semibold block mb-1">
-              {subtitle}
-            </span>
-          )}
-          {title && (
-            <h2 className="text-2xl sm:text-3xl font-serif text-[#1A1A1A]">
-              {title}
-            </h2>
-          )}
-        </div>
-      )}
+    <div className="w-full py-8">
+      <Swiper
+        modules={[Pagination, Autoplay]}
+        spaceBetween={24}
+        slidesPerView={1}
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 3500, disableOnInteraction: false }}
+        breakpoints={{
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        }}
+        className="pb-12"
+      >
+        {products.map((item) => (
+          <SwiperSlide key={item.id} className="flex justify-center p-2">
+            <div className="w-full max-w-xs bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
+              {/* Imagem do Produto com Tag de Categoria */}
+              <div className="relative w-full aspect-square bg-[#FAF8F5] overflow-hidden">
+                <span className="absolute top-3 left-3 z-10 text-[10px] uppercase font-semibold tracking-wider bg-stone-900/80 text-white px-2.5 py-1 rounded-full">
+                  {item.category}
+                </span>
 
-      {displayProducts.length > 0 ? (
-        <Swiper
-          modules={[Autoplay, Pagination]}
-          grabCursor={true}
-          centeredSlides={false}
-          loop={true}
-          autoplay={{
-            delay: 3000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          pagination={{ clickable: true }}
-          breakpoints={{
-            320: { slidesPerView: 1.2, spaceBetween: 16 },
-            640: { slidesPerView: 2.2, spaceBetween: 20 },
-            1024: { slidesPerView: 3.5, spaceBetween: 24 },
-          }}
-          className="!pb-12"
-        >
-          {displayProducts.map((product, index) => {
-            const productSlug =
-              product.slug ||
-              product.name
-                ?.toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^\w-]+/g, '') ||
-              product.id;
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  fill
+                  className="object-cover object-center p-4 hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  priority
+                />
+              </div>
 
-            const productImage =
-              product.image || product.imageUrl || '/placeholder.png';
+              {/* Informações da Peça */}
+              <div className="p-4 flex flex-col flex-1 justify-between text-center bg-white">
+                <div>
+                  <h3 className="text-sm font-medium text-stone-800 line-clamp-2 min-h-[2.5rem]">
+                    {item.name}
+                  </h3>
+                  <p className="mt-2 text-base font-semibold text-stone-900">
+                    R$ {item.price.toFixed(2).replace(".", ",")}
+                  </p>
+                </div>
 
-            return (
-              <SwiperSlide key={`${product.id}-${index}`}>
                 <Link
-                  href={`/produto/${productSlug}`}
-                  className="block bg-white border border-[#E5E7EB] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full"
+                  href={`/produto/${item.id}`}
+                  className="mt-4 block w-full py-2 px-4 rounded-xl text-xs font-medium text-stone-800 border border-stone-200 hover:bg-stone-50 transition-colors"
                 >
-                  <div className="relative aspect-square w-full bg-[#FAFAFA] overflow-hidden">
-                    {product.category && (
-                      <span className="absolute top-3 left-3 z-10 bg-[#340C40] text-white text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-full font-medium shadow-sm">
-                        {product.category}
-                      </span>
-                    )}
-                    <Image
-                      src={productImage}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover"
-                    />
-                  </div>
-
-                  <div className="p-4 text-center">
-                    <h3 className="text-[#1A1A1A] font-medium text-sm line-clamp-1 mb-1">
-                      {product.name}
-                    </h3>
-                    <span className="text-[#340C40] text-sm font-bold block">
-                      {typeof product.price === 'number'
-                        ? `R$ ${product.price.toFixed(2).replace('.', ',')}`
-                        : product.price}
-                    </span>
-                  </div>
+                  Ver Detalhes
                 </Link>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      ) : null}
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 }
-
-// Export default para compatibilidade com qualquer tipo de import
-export default ProductCarousel;

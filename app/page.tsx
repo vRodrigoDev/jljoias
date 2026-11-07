@@ -1,62 +1,42 @@
-"use client";
-
-import dynamic from "next/dynamic";
 import { AnnouncementBar } from "./components/AnnouncementBar";
 import { Header } from "./components/Header";
 import { HeroBanner } from "./components/HeroBanner";
 import { Footer } from "./components/Footer";
-
-// Carrega o carrossel de produtos dinamicamente sem quebra de SSR
-const ProductCarousel = dynamic(
-  () => import("./components/ProductCarousel").then((mod) => mod.ProductCarousel),
-  { ssr: false }
-);
-
-const products = [
-  {
-    id: "1",
-    name: "Corrente Grumet 10mm Dupla Camada Ouro 18k",
-    price: 489.0,
-    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=800",
-    category: "Correntes",
-  },
-  {
-    id: "2",
-    name: "Pulseira Tijolo Baiano Ouro 18k",
-    price: 329.0,
-    image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&q=80&w=800",
-    category: "Pulseiras",
-  },
-  {
-    id: "3",
-    name: "Anel Solitário Onyx Masculino",
-    price: 259.0,
-    image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800",
-    category: "Anéis",
-  },
-  {
-    id: "4",
-    name: "Corrente Cartier 7mm Fecho Gaveta",
-    price: 549.0,
-    image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800",
-    category: "Correntes",
-  },
-];
+import { ProductCard } from "./components/ProductCard";
+import { PRODUCTS } from "./products";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#FAFAFA] text-[#1A1A1A] relative font-sans">
+    <div className="min-h-screen flex flex-col bg-[#FAF8F5]">
       <AnnouncementBar />
       <Header />
-      <HeroBanner />
-      <section id="mais-vendidos" className="scroll-mt-12">
-        <ProductCarousel
-          title="Destaques & Mais Vendidos"
-          subtitle="Coleção Exclusiva"
-          products={products}
-        />
-      </section>
+
+      <main className="flex-1">
+        {/* Carrossel apenas aqui no topo */}
+        <HeroBanner />
+
+        {/* Vitrine fixa embaixo (grade parada com as 6 peças) */}
+        <section id="vitrine" className="py-12 md:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-serif text-[#1C1917] tracking-wide font-normal">
+              Coleção Rommanel
+            </h2>
+            <div className="w-16 h-0.5 bg-[#C5A880] mx-auto mt-3 mb-2" />
+            <p className="text-sm text-stone-500 font-light">
+              Peças banhadas a ouro 18k selecionadas para você
+            </p>
+          </div>
+
+          {/* Grade estática de 2 a 3 colunas, sem carrossel e sem mexer */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {PRODUCTS.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      </main>
+
       <Footer />
-    </main>
+    </div>
   );
 }

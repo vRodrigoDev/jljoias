@@ -2,14 +2,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "img.rommanel.com.br",
+        pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: "catalogopersonalizado.rommanel.com.br",
+        pathname: "/**",
       },
     ],
   },
