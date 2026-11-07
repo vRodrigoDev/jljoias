@@ -21,19 +21,15 @@ export function Header() {
     }
   };
 
-  // Rolagem suave garantida em qualquer clique de categoria
   const handleCategoryClick = (categoria?: string) => {
     if (!categoria) {
-      // Clicou em INÍCIO: vai para a home sem parâmetros e sobe ao topo macio
       router.push("/");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
-    // Clicou em CORRENTES, PULSEIRAS, etc.
     router.push(`/?categoria=${encodeURIComponent(categoria)}`);
 
-    // Dá um breve instante para o DOM atualizar e rola suavemente até a vitrine
     setTimeout(() => {
       const vitrineElement = document.getElementById("vitrine");
       if (vitrineElement) {
@@ -43,10 +39,11 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-stone-200/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200/60">
+      {/* Linha Principal do Cabeçalho */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         
-        {/* Menu de Categorias (Desktop) */}
+        {/* Menu de Categorias (Visível apenas em telas Médias/Grandes) */}
         <nav className="hidden md:flex items-center space-x-8 text-xs font-medium tracking-wider uppercase text-stone-700">
           <button
             type="button"
@@ -78,17 +75,21 @@ export function Header() {
           </button>
         </nav>
 
-        {/* Logótipo Central */}
-        <div className="flex-1 md:flex-initial text-center md:text-left">
-          <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="inline-block">
-            <span className="font-serif text-2xl tracking-widest text-[#1C1917] font-semibold">
+        {/* Logótipo */}
+        <div className="flex-initial text-left">
+          <Link
+            href="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="inline-block"
+          >
+            <span className="font-serif text-xl sm:text-2xl tracking-widest text-[#1C1917] font-semibold">
               JL<span className="font-light tracking-normal">JOIAS</span>
             </span>
           </Link>
         </div>
 
         {/* Ações / Ícones da Direita */}
-        <div className="flex items-center space-x-5 text-stone-700">
+        <div className="flex items-center space-x-4 sm:space-x-5 text-stone-700">
           <button
             type="button"
             aria-label="Pesquisar"
@@ -140,7 +141,38 @@ export function Header() {
             )}
           </button>
         </div>
+      </div>
 
+      {/* Barra de Categorias Mobile (Exibida somente no celular e telas pequenas) */}
+      <div className="md:hidden flex items-center space-x-6 overflow-x-auto px-4 py-2.5 border-t border-stone-200/50 no-scrollbar text-[11px] font-medium tracking-wider uppercase text-stone-600 bg-[#FAF8F5]">
+        <button
+          type="button"
+          onClick={() => handleCategoryClick()}
+          className="whitespace-nowrap hover:text-stone-900 transition-colors py-0.5 cursor-pointer"
+        >
+          INÍCIO
+        </button>
+        <button
+          type="button"
+          onClick={() => handleCategoryClick("Gargantilhas")}
+          className="whitespace-nowrap hover:text-stone-900 transition-colors py-0.5 cursor-pointer"
+        >
+          CORRENTES
+        </button>
+        <button
+          type="button"
+          onClick={() => handleCategoryClick("Pulseiras")}
+          className="whitespace-nowrap hover:text-stone-900 transition-colors py-0.5 cursor-pointer"
+        >
+          PULSEIRAS
+        </button>
+        <button
+          type="button"
+          onClick={() => handleCategoryClick("Anéis")}
+          className="whitespace-nowrap hover:text-stone-900 transition-colors py-0.5 cursor-pointer"
+        >
+          ANÉIS
+        </button>
       </div>
     </header>
   );
